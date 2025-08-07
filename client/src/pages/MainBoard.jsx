@@ -21,7 +21,7 @@ const MainBoard = () => {
   // Fetch all questions
   const handleFetchAllQuestions = async () => {
     try {
-      const response = await axios.get('https://ques-ans-frontend.vercel.app/api/admin/quries/all');
+      const response = await apiAdminQueryHandle.get('/all');
       // const response = await axios.get('http://localhost:2525/api/admin/quries/all');
       console.log('Questions:', response.data.data);
       return response.data.data;
@@ -34,7 +34,7 @@ const MainBoard = () => {
   // Fetch all answers
   const handleFetchAllAnswers = async () => {
     try {
-      const response = await axios.get('https://ques-ans-frontend.vercel.app/api/admin/quries/answers');
+      const response = await apiAdminQueryHandle.get('/answers');
       // const response = await axios.get('http://localhost:2525/api/admin/quries/answers');
       console.log('Answers:', response.data.data);
       return response.data.data;
