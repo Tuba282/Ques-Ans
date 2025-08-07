@@ -11,12 +11,12 @@ router.post('/answers/:questionId', middlewareToProtect, isAdmin, addAnswer);//�
 
 
 // Questions (admin)
-
+router.get('/all', getAllQuestions);//✔️
 router.delete('/delete/:questionId', middlewareToProtect, isAdmin, deleteAnyQuestion);//✔️
 router.get('/stats', middlewareToProtect, isAdmin, getAllStats);//✔️
 
 // Answers (admin)
-
+router.get('/answers', getAllAnswers);//✔️
 router.delete('/answers/:answerId', middlewareToProtect, isAdmin, deleteAnyAnswer);//✔️--
 
 export default router;

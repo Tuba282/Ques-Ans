@@ -57,7 +57,7 @@ const UserQuires = () => {
       setEditFormLoading(false);
     }
   };
-  const [form, setForm] = useState({ title: '', description: '' });
+  const [form, setForm] = useState({ title: '', description: '', isPublic: true });
   const [formLoading, setFormLoading] = useState(false);
   // Favorite logic
   const [favorites, setFavorites] = useState(() => {
@@ -81,8 +81,11 @@ const UserQuires = () => {
 
   // Handle form input change
   const handleFormChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    toast.error(err?.response?.data?.message);
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
   // Fetch questions function
@@ -287,44 +290,56 @@ const UserQuires = () => {
               <DialogTitle as="h3" className="text-lg font-bold text-gray-800 mb-4">
                 Add New Question
               </DialogTitle>
-              <form onSubmit={handleAddQuestion} className="space-y-4">
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">Title</label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={form.title}
-                    onChange={handleFormChange}
-                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">Description</label>
-                  <textarea
-                    name="description"
-                    value={form.description}
-                    onChange={handleFormChange}
-                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
-                    rows={4}
-                    required
-                  />
-                </div>
-
-                <div className="flex justify-end gap-2 mt-4">
-                  <Button
-                    type="button"
-                    className="rounded-md bg-gray-200 px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-300"
-                    onClick={() => setAddQuesModal(false)}
-                    disabled={formLoading}
-                  >Cancel</Button>
-                  <Button
-                    type="submit"
-                    className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700"
-                    disabled={formLoading}
-                  >{formLoading ? 'Adding...' : 'Add Question'}</Button>
-                </div>
-              </form>
+      <form onSubmit={handleAddQuestion} className="space-y-4">
+        <div>
+          <label className="block text-gray-700 font-medium mb-1">Title</label>
+          <input
+            type="text"
+            name="title"
+            value={form.title}
+            onChange={handleFormChange}
+            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium mb-1">Description</label>
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleFormChange}
+            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+            rows={4}
+            required
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="isPublic"
+            name="isPublic"
+            checked={form.isPublic}
+            onChange={handleFormChange}
+            className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+          />
+          <label htmlFor="isPublic" className="text-gray-700 font-medium select-none">
+            Make this question public
+          </label>
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button
+            type="button"
+            className="rounded-md bg-gray-200 px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-300"
+            onClick={() => setAddQuesModal(false)}
+            disabled={formLoading}
+          >Cancel</Button>
+          <Button
+            type="submit"
+            className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700"
+            disabled={formLoading}
+          >{formLoading ? 'Adding...' : 'Add Question'}</Button>
+        </div>
+      </form>
             </DialogPanel>
           </div>
         </div>

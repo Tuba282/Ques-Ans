@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { BiMessageSquareDetail } from 'react-icons/bi';
 import { IoTrendingUpSharp, IoTimeOutline } from 'react-icons/io5';
@@ -6,77 +6,80 @@ import { MdQuestionAnswer } from 'react-icons/md';
 import { FaCalendarAlt, FaUsers, FaHeart, FaClock } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
 import apiAdminQueryHandle from '../config/apiAdminQueryHandle.js';
-import { apiAuthHandle } from '../config/apiAuthHandle.js';
 import Loader from '../components/Loader';
+import axios from 'axios';
+
 
 const MainBoard = () => {
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [questionsData, setQuestionsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchAllData = async () => {
-    setLoading(true);
+  // Fetch all questions
+  const handleFetchAllQuestions = async () => {
     try {
-      // Fetch questions
-      const qRes = await apiAdminQueryHandle.get('/questions');
-      const questions = qRes.data.data || [];
-
-      // Fetch answers
-      const aRes = await apiAdminQueryHandle.get('/answers');
-      const answers = aRes.data.data || [];
-
-      // Fetch users
-      const usersRes = await apiAdminQueryHandle.get('/getUserData');
-      const users = usersRes.data.data || [];
-
-      const mapped = questions.map((q) => {
-        const user =
-          q.userId && typeof q.userId === 'object' && q.userId._id
-            ? users.find((u) => String(u._id) === String(q.userId._id))
-            : users.find((u) => String(u._id) === String(q.userId));
-
-        const answer = answers.find((a) => a.question && a.question._id === q._id);
-
-        let admin = null;
-        if (answer && answer.adminId) {
-          admin =
-            typeof answer.adminId === 'object' && answer.adminId._id
-              ? users.find((u) => String(u._id) === String(answer.adminId._id))
-              : users.find((u) => String(u._id) === String(answer.adminId));
-        }
-
-        const qDate = new Date(q.createdAt);
-        const aDate = answer?.createdAt ? new Date(answer.createdAt) : null;
-
-        return {
-          id: q._id,
-          question: q.description,
-          subject: q.title,
-          questionDate: qDate,
-          questionTime: qDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          userName: user?.name || 'User',
-          userProfile: user?.profileImage || 'https://via.placeholder.com/40',
-          answer: answer?.answerText || null,
-          adminName: admin?.name || (answer ? 'Admin' : null),
-          adminProfile: admin?.profileImage || 'https://via.placeholder.com/40',
-          answerDate: aDate,
-          answerTime: aDate
-            ? aDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            : null,
-        };
-      });
-
-      setQuestionsData(mapped);
+      const response = await axios.get('http://localhost:2525/api/admin/quries/all');
+      console.log('Questions:', response.data.data);
+      return response.data.data;
     } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error(error?.message);
-      setQuestionsData([]);
-    } finally {
-      setLoading(false);
+      console.error('Error fetching questions:', error.response?.data || error.message);
+      return [];
     }
   };
-  fetchAllData();
-}, []);
+
+  // Fetch all answers
+  const handleFetchAllAnswers = async () => {
+    try {
+      const response = await axios.get('http://localhost:2525/api/admin/quries/answers');
+      console.log('Answers:', response.data.data);
+      return response.data.data;
+    } catch (error) {
+      console.error('Error fetching answers:', error.response?.data || error.message);
+      return [];
+    }
+  };
+
+  // Fetch all users
+  const handleFetchAllUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:2525/api/auth/getUserData', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('Users:', response.data.data);
+      return response.data.data;
+    } catch (error) {
+      console.error('Error fetching users:', error.response?.data || error.message);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setLoading(true);
+      try {
+        const [questionsRes, answersRes, usersRes] = await Promise.all([
+          handleFetchAllQuestions(),
+          handleFetchAllAnswers(),
+          handleFetchAllUsers()
+        ]);
+
+        setQuestions(questionsRes);
+        setAnswers(answersRes);
+        setUsers(usersRes);
+      } catch (error) {
+        console.error('Error fetching combined data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, []);
 
   const formatDate = (dateObj) => {
     if (!dateObj) return '';
@@ -88,14 +91,53 @@ useEffect(() => {
     });
   };
 
+  useEffect(() => {
+    if (!loading && questions.length && answers.length && users.length) {
+      const mapped = questions.map((q) => {
+        const user =
+          typeof q.userId === 'object'
+            ? q.userId
+            : users.find((u) => String(u._id) === String(q.userId));
+
+        const answer = answers.find((a) => a.question && String(a.question._id) === String(q._id));
+
+        const admin =
+          answer && typeof answer.adminId === 'object'
+            ? answer.adminId
+            : answer
+              ? users.find((u) => String(u._id) === String(answer.adminId))
+              : null;
+
+        const qDate = new Date(q.createdAt);
+        const aDate = answer?.createdAt ? new Date(answer.createdAt) : null;
+
+        return {
+          id: q._id,
+          subject: q.title,
+          question: q.description,
+          questionDate: qDate.toLocaleDateString(),
+          questionTime: qDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          userName: user?.username || 'User',
+          userProfile: user?.profileImage || 'https://images.icon-icons.com/1378/PNG/512/avatardefault_92824.png',
+          answer: answer?.answerText || null,
+          adminName: admin?.name || (answer ? 'Admin' : null),
+          adminProfile: admin?.profileImage || 'https://images.icon-icons.com/1378/PNG/512/avatardefault_92824.png',
+          answerDate: aDate?.toLocaleDateString() || null,
+          answerTime: aDate
+            ? aDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : null,
+        };
+      });
+
+      setQuestionsData(mapped);
+    }
+  }, [loading, questions, answers, users]);
+
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Toaster
-        position="top-center"
-        reverseOrder={false}
-      />
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
         {/* Welcome Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
@@ -104,12 +146,11 @@ useEffect(() => {
           <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
             Browse community questions and answers, get help from our support team
           </p>
-
           {/* Action Buttons */}
           <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
             <div className="rounded-md shadow">
               <Link
-                to="/board"
+                to="/dashboard"
                 className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-gray-50  hover:text-indigo-600 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
               >
                 <BiMessageSquareDetail className="mr-2" />
@@ -127,16 +168,14 @@ useEffect(() => {
             </div>
           </div>
         </div>
-
         {/* Questions Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
             <MdQuestionAnswer className="mr-3 text-indigo-600" />
             Community Q&A
           </h2>
-
           {/* Questions List */}
-          <div className="space-y-6 flex flex-col items-center">
+          <div className="space-y-6 flex flex-wrap gap-4 items-baseline">
             {loading ? (
               <Loader />
             ) : questionsData.length === 0 ? (
@@ -156,7 +195,6 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
-
                   {/* Chat-style Q&A */}
                   <div className="space-y-4">
                     {/* Question - Right side */}
@@ -174,7 +212,6 @@ useEffect(() => {
                         </div>
                       </div>
                     </div>
-
                     {/* Answer - Left side (if exists) */}
                     {item.answer ? (
                       <div className="flex justify-start">
@@ -206,34 +243,17 @@ useEffect(() => {
                       </div>
                     )}
                   </div>
-
-                  {/* Stats Section */}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <div className="flex items-center space-x-4">
-                        <span className="flex items-center">
-                          <FaUsers className="mr-1" />
-                          Views: 0
-                        </span>
-                        <span className="flex items-center">
-                          <FaHeart className="mr-1" />
-                          Helpful: 0
-                        </span>
-                      </div>
-                      <span className="text-xs">Question ID: #{item.id}</span>
-                    </div>
-                  </div>
+                  
                 </div>
               ))
             )}
           </div>
         </div>
-
         {/* Summary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           <SummaryCard icon={<BiMessageSquareDetail className="text-2xl" />} label="Total Questions" value={questionsData.length} color="indigo" />
           <SummaryCard icon={<MdQuestionAnswer className="text-2xl" />} label="Answered" value={questionsData.filter(q => q.answer).length} color="green" />
-          <SummaryCard icon={<FaClock className="text-2xl" />} label="Pending" value={questionsData.filter(q => !q.answer).length} color="yellow" />
+          <SummaryCard icon={<FaClock className="text-2xl" />} label="Not Answered" value={questionsData.filter(q => !q.answer).length} color="yellow" />
         </div>
       </div>
     </div>

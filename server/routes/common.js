@@ -7,12 +7,6 @@ const router = express.Router();
 // upload image
 router.post('/', upload_image_contoller);
 
-// Questions (admin)
-router.get('/all', getAllQuestions);
-
-
-// Answers (admin)
-router.get('/answers', getAllAnswers);
 
 
 export default router;
