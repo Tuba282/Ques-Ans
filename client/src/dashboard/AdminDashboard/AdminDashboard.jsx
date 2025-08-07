@@ -1,11 +1,14 @@
 import { FaUser, FaUsers, FaCube, FaChartLine} from 'react-icons/fa';
-import {MdDelete } from 'react-icons/md';
+import { MdDelete } from 'react-icons/md';
+import { MdOutlineQuestionAnswer } from 'react-icons/md';
 import { useCallback } from 'react';
 import { getUser } from '../../utils/auth';
 import apiAdminQueryHandle from '../../config/apiAdminQueryHandle';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { apiAuthHandle } from '../../config/apiAuthHandle';
+
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 
 const AdminDashboard = () => {
     const currentUser = getUser()
@@ -68,6 +71,47 @@ const AdminDashboard = () => {
 
     const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState([]);
+
+    // Modal state for answering
+    const [answerModal, setAnswerModal] = useState(false);
+    const [answerForm, setAnswerForm] = useState({ answerText: '', questionId: '' });
+    const [answerLoading, setAnswerLoading] = useState(false);
+    // Open answer modal for a question
+    const openAnswerModal = (questionId) => {
+        setAnswerForm({ answerText: '', questionId });
+        setAnswerModal(true);
+    };
+
+    // Handle answer form change
+    const handleAnswerFormChange = (e) => {
+        setAnswerForm({ ...answerForm, [e.target.name]: e.target.value });
+    };
+
+    // Submit answer to DB
+    const handleAddAnswer = async (e) => {
+        e.preventDefault();
+        setAnswerLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const res = await apiAdminQueryHandle.post(`/answers/${answerForm.questionId}`, {
+                answerText: answerForm.answerText
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.data.success) {
+                toast.success(res.data.message || 'Answer added');
+                setAnswerModal(false);
+                setAnswerForm({ answerText: '', questionId: '' });
+                fetchAllQnA();
+            } else {
+                toast.error(res.data.message || 'Failed to add answer');
+            }
+        } catch (err) {
+            toast.error(err?.response?.data?.message || 'Failed to add answer');
+        } finally {
+            setAnswerLoading(false);
+        }
+    };
 
     // Fetch all questions and answers for admin
     const fetchAllQnA = useCallback(async () => {
@@ -202,13 +246,22 @@ const AdminDashboard = () => {
                                     </div>
                                     <h2 className='text-lg font-semibold my-2'>Subject : <span className='font-normal'>{q.title}</span></h2>
                                     <p className="text-lg leading-relaxed mb-6"><span className='text-lg font-semibold my-2'>Question : </span>{q.description}</p>
+                                    {/* Give Answer icon (if not already answered) */}
+                                    {!answer && (
+                                        <button
+                                            className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 text-sm font-semibold mt-2"
+                                            onClick={() => openAnswerModal(q._id)}
+                                            title="Give Answer"
+                                        >
+                                            <MdOutlineQuestionAnswer className="text-lg" /> Give Answer
+                                        </button>
+                                    )}
                                     {answer && (
                                         <div className="max-w-lg border px-6 ms-auto py-4 rounded-lg shadow-sm shadow-black/50 my-5 bg-green-50">
                                             <div className="flex items-center mb-6">
                                                 <div className="text-lg font-medium text-gray-800">{answer.adminId?.name || 'Admin'}</div>
                                                 <div className="text-gray-500 ml-4">{new Date(answer.createdAt).toLocaleString()}</div>
                                                 <div className="ms-auto flex gap-2">
-                                                    
                                                     <button className="text-red-600 hover:text-red-900 text-sm flex items-center gap-1" title="Delete Answer" onClick={() => handleDeleteAnswer(answer._id)}>
                                                         <MdDelete className="inline" />
                                                     </button>
@@ -224,8 +277,49 @@ const AdminDashboard = () => {
                     )}
                 </div>
             </div>
+            {/*get Answer Modal */}
+            <Dialog open={answerModal} as="div" className="relative z-10 focus:outline-none" onClose={() => setAnswerModal(false)}>
+                <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4">
+                        <DialogPanel
+                            transition
+                            className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg duration-300 ease-out shadow-sm shadow-black/50"
+                        >
+                            <DialogTitle as="h3" className="text-lg font-bold text-gray-800 mb-4">
+                                Give Answer
+                            </DialogTitle>
+                            <form onSubmit={handleAddAnswer} className="space-y-4">
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-1">Answer</label>
+                                    <textarea
+                                        name="answerText"
+                                        value={answerForm.answerText}
+                                        onChange={handleAnswerFormChange}
+                                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+                                        rows={4}
+                                        required
+                                    />
+                                </div>
+                                <div className="flex justify-end gap-2 mt-4">
+                                    <button
+                                        type="button"
+                                        className="rounded-md bg-gray-200 px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-300"
+                                        onClick={() => setAnswerModal(false)}
+                                        disabled={answerLoading}
+                                    >Cancel</button>
+                                    <button
+                                        type="submit"
+                                        className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700"
+                                        disabled={answerLoading}
+                                    >{answerLoading ? 'Submitting...' : 'Submit Answer'}</button>
+                                </div>
+                            </form>
+                        </DialogPanel>
+                    </div>
+                </div>
+            </Dialog>
         </div>
-    )
+    );
 }
 
 export default AdminDashboard;
