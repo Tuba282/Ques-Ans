@@ -1,6 +1,6 @@
 import React from 'react';
 
-const UserWork = ({ goto }) => (
+const UserQuires = ({ goto }) => (
   <div className="bg-white rounded-lg shadow p-6">
     <div className="flex justify-between items-center">
       <h2 className="text-xl font-bold mb-4">My Work</h2>
@@ -10,4 +10,4 @@ const UserWork = ({ goto }) => (
   </div>
 );
 
-export default UserWork;
+export default UserQuires;

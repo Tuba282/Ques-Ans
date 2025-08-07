@@ -6,8 +6,9 @@ import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/adminRoutes.js';
 import uploadFile from './routes/common.js';
 import userRoutes from './routes/userRoutes.js';
-// ...existing code...
 import fileUpload from 'express-fileupload';
+import adminQuestionRoutes from './routes/admin_Ques_Ans_Routes.js';
+import userQuestionRoutes from './routes/user_Ques_Ans_Routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +29,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/api/auth', adminRoutes);
 app.use('/api/upload', uploadFile);
+app.use('/api/quries', adminQuestionRoutes);
+app.use('/api/quries', userQuestionRoutes);
 
 // Test route
 app.get('/', (req, res) => {

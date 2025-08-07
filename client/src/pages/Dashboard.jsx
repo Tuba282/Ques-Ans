@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RiAccountPinBoxFill } from "react-icons/ri";
-import { FaUser, FaUsers, FaCube, FaChartLine, FaCog, FaHeart, FaBell, FaEdit, FaTrash, FaPlus, FaSearch, FaFilter, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaInstagram , FaHome } from 'react-icons/fa';
+import { FaUser, FaUsers, FaCube, FaChartLine, FaCog, FaHeart, FaBell, FaEdit, FaTrash, FaPlus, FaSearch, FaFilter, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaInstagram, FaHome } from 'react-icons/fa';
 import { getUser, set_verification_Email, setToken, setUser as set_user_localStorage, removeUser, setUser } from '../utils/auth';
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { AiOutlineLinkedin } from "react-icons/ai";
@@ -8,6 +8,7 @@ import { TbBrandGithub } from "react-icons/tb";
 
 import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { apiAuthHandle } from '../config/apiAuthHandle.js';
+import axios from 'axios';
 import apiUploadHandle from '../config/apiUploadHandle.js';
 import toast, { Toaster } from 'react-hot-toast';
 // Blog API removed
@@ -15,14 +16,16 @@ import { useNavigate } from 'react-router-dom';
 
 
 import UserProfile from '../dashboard/UserDashboard/UserProfile';
-import UserWork from '../dashboard/UserDashboard/UserWork';
+import UserWork from '../dashboard/UserDashboard/UserQuries.jsx';
 import UserFavorites from '../dashboard/UserDashboard/UserFavorites';
 import UserSettings from '../dashboard/UserDashboard/UserSettings';
 import AdminDashboard from '../dashboard/AdminDashboard/AdminDashboard';
 import AdminProfile from '../dashboard/AdminDashboard/AdminProfile';
 import AdminSettings from '../dashboard/AdminDashboard/AdminSettings';
 import AdminUsers from '../dashboard/AdminDashboard/AdminUsers';
-import AllWork from '../dashboard/AdminDashboard/AllWork.jsx';
+import AllWork from '../dashboard/AdminDashboard/AllQuries.jsx';
+import AllQuries from '../dashboard/AdminDashboard/AllQuries.jsx';
+import UserQuires from '../dashboard/UserDashboard/UserQuries.jsx';
 
 const Dashboard = () => {
 
@@ -99,7 +102,25 @@ const Dashboard = () => {
     }
   };
   // Blog fetch logic removed
-  // Blog stats logic removed
+  // get Stats
+  const [analytics, setAnalytics] = useState({});
+
+  // Fetch admin stats (questions, users, answers)
+  const getStats = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const { data } = await axios.get('/api/admin/questions/stats', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Stats fetched successfully");
+      setAnalytics(data?.stats);
+    } catch (error) {
+      console.error("Error fetching stats:", error?.response?.data || error.message);
+      toast.error("Failed to fetch stats");
+    }
+  };
   // get formatted Data
   function formatCustomDate(dateString) {
     const date = new Date(dateString);
@@ -291,35 +312,11 @@ const Dashboard = () => {
   };
 
 
-  // Example usage (replace with your actual logic for switching views):
-  // You might have a state like `isAdmin` to determine which dashboard to show
-  // Example:
-  // const isAdmin = currentUser && currentUser.role === 'admin';
-
-  // Render logic (simplified):
-  // return isAdmin ? (
-  //   <>
-  //     <AdminDashboard analytics={analytics} recentBlogs={recentBlogs} />
-  //     <AdminProfile currentUser={currentUser} />
-  //     <AdminSettings {...props} />
-  //     <AdminUsers {...props} />
-  //   </>
-  // ) : (
-  //   <>
-  //     <UserProfile currentUser={currentUser} />
-  //     <UserWork goto={goto} />
-  //     <UserFavorites />
-  //     <UserSettings {...props} />
-  //   </>
-  // );
-  // ...existing code...
-
-
   // Sidebar navigation
   const userNavItems = [
     { id: 'profile', label: 'Profile', icon: FaUser },
     { id: 'home', label: 'Home', icon: FaHome },
-    { id: 'work', label: 'My Work', icon: FaCube },
+    { id: 'quires', label: 'My Quires', icon: FaCube },
     { id: 'favorites', label: 'Favorites', icon: FaHeart },
     { id: 'settings', label: 'Settings', icon: FaCog },
     { id: 'login', label: 'Login', icon: FaUser },
@@ -331,7 +328,7 @@ const Dashboard = () => {
     { id: 'home', label: 'Home', icon: FaHome },
     { id: 'profile', label: 'Profile', icon: RiAccountPinBoxFill },
     { id: 'settings', label: 'Settings', icon: FaCog },
-    { id: 'work', label: 'Work', icon: FaCube },
+    { id: 'quires', label: 'Quires', icon: FaCube },
     { id: 'login', label: 'Login', icon: FaUser },
   ];
 
@@ -342,19 +339,38 @@ const Dashboard = () => {
       switch (activeTab) {
         case 'login': return goto('/');
         case 'home': return goto('/home');
-        case 'dashboard': return <AdminDashboard analytics={analytics} recentBlogs={recentBlogs} />;
-        case 'users': return <AdminUsers analytics={analytics} users={users} setAddUserModal={setAddUserModal} addUserModal={addUserModal} handleAddUser={handleAddUser} handle_AddUser_Change={handle_AddUser_Change} formData={formData} showPassword={showPassword} setShowPassword={setShowPassword} showConfirmPassword={showConfirmPassword} setShowConfirmPassword={setShowConfirmPassword} handleLogout={handleLogout} />;
-        case 'settings': return <AdminSettings updateUser={updateUser} updateImage={updateImage} handleUserSettingsChange={handleUserSettingsChange} handleImageChange={handleImageChange} handleUpdateProfile={handleUpdateProfile} handleLogout={handleLogout} currentUser={currentUser} />;
-        case 'profile': return <AdminProfile currentUser={currentUser} />;
-        case 'work': return <AllWork/>; // You can create and import an AdminWork component if needed
-        default: return <AdminDashboard analytics={analytics} recentBlogs={recentBlogs} />;
+        case 'dashboard':
+          return <AdminDashboard analytics={analytics} />;
+        case 'users':
+          return <AdminUsers
+            analytics={analytics}
+            users={users}
+            setAddUserModal={setAddUserModal}
+            addUserModal={addUserModal}
+            handleAddUser={handleAddUser}
+            handle_AddUser_Change={handle_AddUser_Change}
+            formData={formData}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
+            showConfirmPassword={showConfirmPassword}
+            setShowConfirmPassword={setShowConfirmPassword}
+            handleLogout={handleLogout}
+          />;
+        case 'settings':
+          return <AdminSettings updateUser={updateUser} updateImage={updateImage} handleUserSettingsChange={handleUserSettingsChange} handleImageChange={handleImageChange} handleUpdateProfile={handleUpdateProfile} handleLogout={handleLogout} currentUser={currentUser} />;
+        case 'profile':
+          return <AdminProfile currentUser={currentUser} />;
+        case 'quires':
+          return <AllQuries />;
+        default:
+          return <AdminDashboard analytics={analytics} />;
       }
     } else {
       switch (activeTab) {
         case 'login': return goto('/');
         case 'home': return goto('/home');
         case 'profile': return <UserProfile currentUser={currentUser} />;
-        case 'work': return <UserWork goto={goto} />;
+        case 'quires': return <UserQuires goto={goto} />;
         case 'favorites': return <UserFavorites />;
         case 'settings': return <UserSettings updateUser={updateUser} updateImage={updateImage} handleUserSettingsChange={handleUserSettingsChange} handleImageChange={handleImageChange} handleUpdateProfile={handleUpdateProfile} handleLogout={handleLogout} currentUser={currentUser} />;
         default: return <UserProfile currentUser={currentUser} />;
@@ -364,6 +380,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     setActiveTab(currentUser.role === 'admin' ? 'dashboard' : 'profile');
+    if (currentUser.role === 'admin') {
+      getStats();
+    }
   }, [currentUser.role]);
 
   return (

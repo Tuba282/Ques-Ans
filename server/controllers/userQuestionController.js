@@ -43,7 +43,7 @@ export const updateQuestion = async (req, res) => {
 };
 
 // Delete own question
-export const deleteQuestion = async (req, res) => {
+export const deleteOwnQuestion = async (req, res) => {
   try {
     const question = await Question.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
     if (!question) return res.status(404).json({ error: 'Not found or not authorized' });
