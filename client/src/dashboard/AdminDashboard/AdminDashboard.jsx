@@ -257,18 +257,19 @@ const AdminDashboard = () => {
                                         </button>
                                     )}
                                     {answer && (
-                                        <div className="max-w-lg border px-6 ms-auto py-4 rounded-lg shadow-sm shadow-black/50 my-5 bg-green-50">
+                                        <div className="max-w-lg border px-6 ms-auto py-4 rounded-lg shadow-sm shadow-black/50 my-5 bg-indigo-500">
                                             <div className="flex items-center mb-6">
-                                                <div className="text-lg font-medium text-gray-800">{answer.adminId?.name || 'Admin'}</div>
-                                                <div className="text-gray-500 ml-4">{new Date(answer.createdAt).toLocaleString()}</div>
+                                                <div className="text-lg font-medium text-white">{answer.adminId?.name || 'Admin'}</div>
+                                                <div className="text-white/50 ml-4">{new Date(answer.createdAt).toLocaleString()}</div>
                                                 <div className="ms-auto flex gap-2">
-                                                    <button className="text-red-600 hover:text-red-900 text-sm flex items-center gap-1" title="Delete Answer" onClick={() => handleDeleteAnswer(answer._id)}>
-                                                        <MdDelete className="inline" />
+
+                                                    <button className="text-white hover:text-red-900 text-sm flex items-center gap-1" title="Delete Answer" onClick={() => handleDeleteAnswer(answer._id)}>
+                                                        <MdDelete className="inline text-lg" />
                                                     </button>
                                                 </div>
                                             </div>
-                                            <h2 className='text-lg font-semibold my-2'>Subject : {q.title}</h2>
-                                            <p className="text-lg leading-relaxed mb-6"><span className='text-lg font-semibold my-2'>Answer : </span>{answer.answerText}</p>
+                                            <h2 className='text-lg text-white  font-semibold my-2'>Subject : <span className='font-nornal text-white/50'>{q.title}</span> </h2>
+                                            <p className="text-lg  text-white leading-relaxed mb-6"><span className='text-lg font-semibold my-2 '>Answer : </span> <span className='text-white/50'> {answer.answerText}</span></p>
                                         </div>
                                     )}
                                 </div>
