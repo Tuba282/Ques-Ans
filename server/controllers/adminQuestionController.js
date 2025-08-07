@@ -93,9 +93,14 @@ export const getAllStats = async (req, res) => {
 export const getAllQuestions = async (req, res) => {
   try {
     const questions = await Question.find().populate('userId', 'username');
-    res.json(questions);
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: 'Fetched all questions successfully',
+      data: questions
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ status: 500, success: false, message: 'Failed to fetch questions', error: err.message });
   }
 };
 
@@ -103,10 +108,15 @@ export const getAllQuestions = async (req, res) => {
 export const deleteAnyQuestion = async (req, res) => {
   try {
     const question = await Question.findByIdAndDelete(req.params.id);
-    if (!question) return res.status(404).json({ error: 'Not found' });
-    res.json({ message: 'Deleted' });
+    if (!question) return res.status(404).json({ status: 404, success: false, message: 'Question not found' });
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: 'Question deleted successfully',
+      data: question
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ status: 500, success: false, message: 'Failed to delete question', error: err.message });
   }
 };
 
