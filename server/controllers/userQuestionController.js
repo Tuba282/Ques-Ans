@@ -33,6 +33,7 @@ export const getMyQuestions = async (req, res) => {
       data: questions
     });
   } catch (err) {
+    
     res.status(500).json({ status: 500, success: false, message: 'Failed to fetch questions', error: err.message });
   }
 };
@@ -41,7 +42,7 @@ export const getMyQuestions = async (req, res) => {
 export const updateQuestion = async (req, res) => {
   try {
     const question = await Question.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.id },
+      { _id: req.params.questionId, userId: req.user.id },
       req.body,
       { new: true }
     );
@@ -60,7 +61,7 @@ export const updateQuestion = async (req, res) => {
 // Delete own question
 export const deleteOwnQuestion = async (req, res) => {
   try {
-    const question = await Question.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    const question = await Question.findOneAndDelete({ _id: req.params.questionId, userId: req.user.id });
     if (!question) return res.status(404).json({ status: 404, success: false, message: 'Not found or not authorized' });
     res.status(200).json({
       status: 200,

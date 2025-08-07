@@ -6,9 +6,9 @@ import { getAnswersForQuestion } from '../controllers/userAnswerController.js';
 const router = express.Router();
 
 // Questions (user)
-router.get('/getMy', middlewareToProtect, getMyQuestions);//✔️
-router.post('/add', middlewareToProtect, addQuestion);//✔️
-router.put('/update/:questionId', middlewareToProtect, updateQuestion);//✔️
+router.get('/getMy', middlewareToProtect, getMyQuestions);//✔️ ✔️
+router.post('/add', middlewareToProtect, addQuestion);//✔️ ✔️
+router.put('/update/:questionId', middlewareToProtect, updateQuestion);//✔️ 
 router.delete('/delete/:questionId', middlewareToProtect, deleteOwnQuestion);//✔️
 
 // Answers (user)

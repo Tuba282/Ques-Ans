@@ -29,8 +29,8 @@ app.use('/api/auth', authRoutes)
 app.use('/api/auth', userRoutes)
 app.use('/api/auth', adminRoutes)
 app.use('/api/upload', uploadFile)
-app.use('/api/quries', adminQuestionRoutes)
-app.use('/api/quries', userQuestionRoutes)
+app.use('/api/admin/quries', adminQuestionRoutes)
+app.use('/api/user/quries', userQuestionRoutes)
 
 // Test route
 app.get('/', (req, res) => {

@@ -52,7 +52,7 @@ const AdminDashboard = ({ analytics }) => (
                 </div>
             </div>
         </div>
-        {/* Blog section removed */}
+        {/* agy kam hona hai */}
     </div>
 );
 

@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RiAccountPinBoxFill } from "react-icons/ri";
-import { FaUser, FaUsers, FaCube, FaChartLine, FaCog, FaHeart, FaBell, FaEdit, FaTrash, FaPlus, FaSearch, FaFilter, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaInstagram, FaHome } from 'react-icons/fa';
+import { FaUser, FaUsers, FaCube, FaChartLine, FaCog, FaHeart, FaBell, FaHome } from 'react-icons/fa';
 import { getUser, set_verification_Email, setToken, setUser as set_user_localStorage, removeUser, setUser } from '../utils/auth';
-import { MdOutlineAlternateEmail } from "react-icons/md";
-import { AiOutlineLinkedin } from "react-icons/ai";
-import { TbBrandGithub } from "react-icons/tb";
 
-import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { apiAuthHandle } from '../config/apiAuthHandle.js';
 import axios from 'axios';
 import apiUploadHandle from '../config/apiUploadHandle.js';
@@ -16,14 +12,12 @@ import { useNavigate } from 'react-router-dom';
 
 
 import UserProfile from '../dashboard/UserDashboard/UserProfile';
-import UserWork from '../dashboard/UserDashboard/UserQuries.jsx';
 import UserFavorites from '../dashboard/UserDashboard/UserFavorites';
 import UserSettings from '../dashboard/UserDashboard/UserSettings';
 import AdminDashboard from '../dashboard/AdminDashboard/AdminDashboard';
 import AdminProfile from '../dashboard/AdminDashboard/AdminProfile';
 import AdminSettings from '../dashboard/AdminDashboard/AdminSettings';
 import AdminUsers from '../dashboard/AdminDashboard/AdminUsers';
-import AllWork from '../dashboard/AdminDashboard/AllQuries.jsx';
 import AllQuries from '../dashboard/AdminDashboard/AllQuries.jsx';
 import UserQuires from '../dashboard/UserDashboard/UserQuries.jsx';
 
