@@ -1,5 +1,8 @@
 
 import Answer from '../models/Answer.js';
+import Question from '../models/Question.js';
+import User from '../models/User.js';
+import { sendAnswerNotification } from '../utils/nodemail.js';
 
 // Add an answer (admin)
 export const addAnswer = async (req, res) => {
@@ -9,7 +12,7 @@ export const addAnswer = async (req, res) => {
       return res.status(400).json({ status: 400, success: false, message: 'Answer text is required' });
     }
     // Fetch question for text
-    const question = await import('../models/Question.js').then(m => m.default.findById(req.params.questionId));
+    const question = await Question.findById(req.params.questionId);
     if (!question) {
       return res.status(404).json({ status: 404, success: false, message: 'Question not found' });
     }
@@ -19,10 +22,26 @@ export const addAnswer = async (req, res) => {
       adminId: req.user.id
     });
     await answer.save();
+
+    // Notify the user via email
+    try {
+      const user = await User.findById(question.userId);
+      if (user && user.email) {
+        await sendAnswerNotification(
+          user.email,
+          question.title,
+          question.description,
+          answerText
+        );
+      }
+    } catch (notifyErr) {
+      console.error('Failed to send answer notification:', notifyErr);
+    }
+
     res.status(201).json({
       status: 201,
       success: true,
-      message: 'Answer added successfully',
+      message: 'Your question has been answered.',
       data: {
         ...answer.toObject(),
         question: {

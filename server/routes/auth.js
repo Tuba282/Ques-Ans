@@ -28,7 +28,7 @@ router.post("/resetPassword/:token", resetPassword);
 
 
 // ye just image upload ke liye hai
-router.post("/upload", upload_image_contoller);
+router.post("/", upload_image_contoller);
 
 
 export default router;

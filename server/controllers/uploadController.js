@@ -21,11 +21,6 @@ dotenv.config();
 
 const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_SECRET_KEY } = process.env;
 
-// cloudinary.config({
-  //   cloud_name: 'dzq61zzxb',
-  //   api_key: '252847669271336',
-  //   api_secret: 'lG4s1E9oXD6N7-CwzUse-WErqoA',
-  // });
   cloudinary.config({
     cloud_name: CLOUDINARY_CLOUD_NAME,
     api_key: CLOUDINARY_API_KEY,
