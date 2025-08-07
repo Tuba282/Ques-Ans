@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AiOutlineWhatsApp } from "react-icons/ai";
 import { FaRegThumbsUp, FaRegShareSquare } from 'react-icons/fa';
 import { MdDelete, MdModeEdit } from "react-icons/md";
 import { IoHandLeft } from "react-icons/io5";
@@ -107,7 +108,6 @@ const UserQuires = () => {
   const handleAddQuestion = async (e) => {
     e.preventDefault();
     setFormLoading(true);
-    toast.error('');
     try {
       const res = await apiUserQueryHandle.post(`/add`, form, {
         headers: {
@@ -237,7 +237,14 @@ const UserQuires = () => {
                   </button>
                 </div>
                 <div className="flex items-center">
-                  <a href="#" className="text-gray-500 hover:text-gray-700"><FaRegShareSquare className="inline mr-1" /> Share</a>
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(`Question: ${q.title}\n${q.description}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-green-600 flex items-center"
+                  >
+                    <AiOutlineWhatsApp className="inline mr-1" /> Share
+                  </a>
                 </div>
               </div>
             </div>
