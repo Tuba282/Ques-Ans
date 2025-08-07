@@ -158,18 +158,14 @@ const AdminUsers = ({ users, setAddUserModal, addUserModal, handleAddUser, handl
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Verified</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Blogs</th>
+              {/* Blog column removed */}
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {users.map(user => {
-              // Find blog count for this user
-              const blogCountObj = Array.isArray(analytics.blogCountsPerUser)
-                ? analytics.blogCountsPerUser.find(b => b.userId === user._id)
-                : null;
-              const blogCount = blogCountObj ? blogCountObj.blogCount : 0;
+              // Blog count logic removed
               return (
                 <tr key={user._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap font-medium">{user.name}</td>
@@ -184,7 +180,7 @@ const AdminUsers = ({ users, setAddUserModal, addUserModal, handleAddUser, handl
                       {user.isVerified ? 'Yes' : 'No'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{blogCount}</td>
+                  {/* Blog count removed */}
                   <td className="px-6 py-4 whitespace-nowrap text-gray-600">{formatCustomDate(user.createdAt)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex space-x-2">

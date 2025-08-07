@@ -5,7 +5,7 @@ import Dashboard from '../pages/Dashboard';
 import HomePage from '../pages/HomePage';
 import ForgetPassword from '../pages/ForgetPassword';
 import ResetPassword from '../pages/ResetPassword';
-import Blogs from '../pages/Blogs';
+// ...existing code...
 
 // Public routes
 export const publicRoutes = [
@@ -58,9 +58,4 @@ export const userRoutes = [
     component: HomePage,
     name: 'Home',
   },
-  {
-    path: '/blogs',
-    component: Blogs,
-    name: 'Blogs',
-  }
 ];

@@ -10,7 +10,7 @@ import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { apiAuthHandle } from '../config/apiAuthHandle.js';
 import apiUploadHandle from '../config/apiUploadHandle.js';
 import toast, { Toaster } from 'react-hot-toast';
-import { apiBlogHandle } from '../config/apiBlogHandle.js';
+// Blog API removed
 import { useNavigate } from 'react-router-dom';
 
 
@@ -33,8 +33,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (currentUser.role === 'admin') {
       getUsersData();
-      fetchBlogs();
-      getStats();
+      // Blog logic removed
     }
   }, [currentUser.role]);
 
@@ -61,8 +60,7 @@ const Dashboard = () => {
 
 
   const [users, setUsers] = useState([]);
-  const [blogs, setBlogs] = useState([]);
-  const [recentBlogs, setRecentBlogs] = useState([])
+  // Blog state removed
   // get users data
   const getUsersData = async () => {
     try {
@@ -100,48 +98,8 @@ const Dashboard = () => {
       console.error('Error in deleting user:', error);
     }
   };
-  // get blogs data
-  const fetchBlogs = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const { data } = await apiBlogHandle.get('/', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setBlogs(data?.blogs);
-      toast.success("Blogs fetched successfully");
-      // get recent blogs data
-      setRecentBlogs(data?.blogs?.slice(-4))
-
-
-    } catch (error) {
-      console.error("Error fetching blogs:", error?.response?.data || error.message);
-      toast.error("Failed to fetch blogs");
-    }
-  };
-  // get Stats
-  const [analytics, setAnalytics] = useState({});
-  
-  const getStats = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const { data } = await apiBlogHandle.get('/stats', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      toast.success("Stats fetched successfully");
-      // get recent blogs data
-      setAnalytics(data?.stats)
-
-
-    } catch (error) {
-      console.error("Error fetching statss:", error?.response?.data || error.message);
-      toast.error("Failed to fetch  stats");
-    }
-  };
+  // Blog fetch logic removed
+  // Blog stats logic removed
   // get formatted Data
   function formatCustomDate(dateString) {
     const date = new Date(dateString);

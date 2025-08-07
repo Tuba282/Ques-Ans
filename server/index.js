@@ -6,7 +6,7 @@ import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/adminRoutes.js';
 import uploadFile from './routes/common.js';
 import userRoutes from './routes/userRoutes.js';
-import BlogRoutes from './routes/Blog.js';
+// ...existing code...
 import fileUpload from 'express-fileupload';
 
 // Load environment variables
@@ -27,7 +27,6 @@ app.use(fileUpload({
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/api/auth', adminRoutes);
-app.use('/api/blogs', BlogRoutes);
 app.use('/api/upload', uploadFile);
 
 // Test route
