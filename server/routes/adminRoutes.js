@@ -9,6 +9,7 @@ const router = express.Router();
 
 // Authenticated route to get user data
 router.get('/getUserData', middlewareToProtect, isAdmin, getUserData)
+router.get('/getAllUser', middlewareToProtect, getUserData)
 
 router.post('/addUserData', middlewareToProtect, isAdmin, addUserData)
 

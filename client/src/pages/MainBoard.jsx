@@ -20,7 +20,7 @@ const MainBoard = () => {
   // Fetch all questions
   const handleFetchAllQuestions = async () => {
     try {
-      const response = await axios.get('http://localhost:2525/api/admin/quries/all');
+      const response = await axios.get('https://ques-ans-frontend.vercel.app/api/admin/quries/all');
       console.log('Questions:', response.data.data);
       return response.data.data;
     } catch (error) {
@@ -32,7 +32,7 @@ const MainBoard = () => {
   // Fetch all answers
   const handleFetchAllAnswers = async () => {
     try {
-      const response = await axios.get('http://localhost:2525/api/admin/quries/answers');
+      const response = await axios.get('https://ques-ans-frontend.vercel.app/api/admin/quries/answers');
       console.log('Answers:', response.data.data);
       return response.data.data;
     } catch (error) {
@@ -45,7 +45,7 @@ const MainBoard = () => {
   const handleFetchAllUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:2525/api/auth/getUserData', {
+      const response = await axios.get('https://ques-ans-frontend.vercel.app/api/auth/getAllUser', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
