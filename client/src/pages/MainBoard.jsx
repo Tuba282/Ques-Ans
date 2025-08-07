@@ -8,6 +8,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import apiAdminQueryHandle from '../config/apiAdminQueryHandle.js';
 import Loader from '../components/Loader';
 import axios from 'axios';
+import { apiAuthHandle } from '../config/apiAuthHandle.js';
 
 
 const MainBoard = () => {
@@ -21,6 +22,7 @@ const MainBoard = () => {
   const handleFetchAllQuestions = async () => {
     try {
       const response = await axios.get('https://ques-ans-frontend.vercel.app/api/admin/quries/all');
+      // const response = await axios.get('http://localhost:2525/api/admin/quries/all');
       console.log('Questions:', response.data.data);
       return response.data.data;
     } catch (error) {
@@ -33,6 +35,7 @@ const MainBoard = () => {
   const handleFetchAllAnswers = async () => {
     try {
       const response = await axios.get('https://ques-ans-frontend.vercel.app/api/admin/quries/answers');
+      // const response = await axios.get('http://localhost:2525/api/admin/quries/answers');
       console.log('Answers:', response.data.data);
       return response.data.data;
     } catch (error) {
@@ -45,7 +48,8 @@ const MainBoard = () => {
   const handleFetchAllUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('https://ques-ans-frontend.vercel.app/api/auth/getAllUser', {
+      const response = await apiAuthHandle.get('/getUserData', {
+      // const response = await axios.get('http://localhost:2525/api/auth/getAllUser', {
         headers: {
           Authorization: `Bearer ${token}`,
         },

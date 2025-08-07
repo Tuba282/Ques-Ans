@@ -297,7 +297,7 @@ const Dashboard = () => {
     if (currentUser.role === 'admin') {
       switch (activeTab) {
         case 'login': return goto('/');
-        case 'home': return goto('/home');
+        case 'home': return goto('/board');
         case 'dashboard':
           return <AdminDashboard />;
         case 'users':
@@ -326,7 +326,7 @@ const Dashboard = () => {
     } else {
       switch (activeTab) {
         case 'login': return goto('/');
-        case 'home': return goto('/home');
+        case 'home': return goto('/board');
         case 'profile': return <UserProfile currentUser={currentUser} />;
         case 'quires': return <UserQuires goto={goto} />;
         case 'favorites': return <UserFavorites />;
