@@ -20,7 +20,7 @@ const HomePage = () => {
             <div className="rounded-md shadow">
               {/* Blog link removed */}
               <Link
-                to="/"
+                to="/board"
                 className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
               >
                 Goto Board
@@ -37,9 +37,6 @@ const HomePage = () => {
           </div>
         </div>
 
-
-        {/* Recent Activity Section */}
-        {/* Blog recent activity section removed */}
       </div>
     </div>
   );

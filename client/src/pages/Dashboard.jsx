@@ -57,7 +57,6 @@ const Dashboard = () => {
 
 
   const [users, setUsers] = useState([]);
-  // Blog state removed
   // get users data
   const getUsersData = async () => {
     try {
@@ -78,43 +77,9 @@ const Dashboard = () => {
       console.error('Error fetching users:', error);
     }
   };
-  // delete user
-  const deleteUser = async (id) => {
-    try {
-      const token = localStorage.getItem('token');
-      const { data } = await apiAuthHandle.delete(`/deleteUserData/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      toast.success(data?.message);
 
-      getUsersData()
-    } catch (error) {
-      toast.error(error.message);
-      console.error('Error in deleting user:', error);
-    }
-  };
-  // Blog fetch logic removed
-  // get Stats
-  const [analytics, setAnalytics] = useState({});
+  
 
-  // Fetch admin stats (questions, users, answers)
-  const getStats = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const { data } = await axios.get('/api/admin/questions/stats', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      toast.success("Stats fetched successfully");
-      setAnalytics(data?.stats);
-    } catch (error) {
-      console.error("Error fetching stats:", error?.response?.data || error.message);
-      toast.error("Failed to fetch stats");
-    }
-  };
   // get formatted Data
   function formatCustomDate(dateString) {
     const date = new Date(dateString);
@@ -322,7 +287,7 @@ const Dashboard = () => {
     { id: 'home', label: 'Home', icon: FaHome },
     { id: 'profile', label: 'Profile', icon: RiAccountPinBoxFill },
     { id: 'settings', label: 'Settings', icon: FaCog },
-    { id: 'quires', label: 'Quires', icon: FaCube },
+    { id: 'recent', label: 'Recent', icon: FaCube },
     { id: 'login', label: 'Login', icon: FaUser },
   ];
 
@@ -334,10 +299,9 @@ const Dashboard = () => {
         case 'login': return goto('/');
         case 'home': return goto('/home');
         case 'dashboard':
-          return <AdminDashboard analytics={analytics} />;
+          return <AdminDashboard />;
         case 'users':
           return <AdminUsers
-            analytics={analytics}
             users={users}
             setAddUserModal={setAddUserModal}
             addUserModal={addUserModal}
@@ -354,10 +318,10 @@ const Dashboard = () => {
           return <AdminSettings updateUser={updateUser} updateImage={updateImage} handleUserSettingsChange={handleUserSettingsChange} handleImageChange={handleImageChange} handleUpdateProfile={handleUpdateProfile} handleLogout={handleLogout} currentUser={currentUser} />;
         case 'profile':
           return <AdminProfile currentUser={currentUser} />;
-        case 'quires':
+        case 'recent':
           return <AllQuries />;
         default:
-          return <AdminDashboard analytics={analytics} />;
+          return <AdminDashboard />;
       }
     } else {
       switch (activeTab) {
@@ -372,12 +336,6 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    setActiveTab(currentUser.role === 'admin' ? 'dashboard' : 'profile');
-    if (currentUser.role === 'admin') {
-      getStats();
-    }
-  }, [currentUser.role]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">

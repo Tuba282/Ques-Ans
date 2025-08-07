@@ -3,6 +3,7 @@ import SignUp from '../pages/SignUp';
 import VerifyOTP from '../pages/VerifyOTP';
 import Dashboard from '../pages/Dashboard';
 import HomePage from '../pages/HomePage';
+import MainBoard from '../pages/MainBoard';
 import ForgetPassword from '../pages/ForgetPassword';
 import ResetPassword from '../pages/ResetPassword';
 // ...existing code...
@@ -48,7 +49,6 @@ export const adminRoutes = [
     component: Dashboard,
     name: 'Dashboard',
   },
-  // agy aur add karne hain.
 ];
 
 // User routes
@@ -57,5 +57,10 @@ export const userRoutes = [
     path: '/home',
     component: HomePage,
     name: 'Home',
+  },
+  {
+    path: '/board',
+    component: MainBoard,
+    name: 'Board',
   },
 ];

@@ -16,11 +16,6 @@ function App() {
   const isAuthenticated = !!user;
   const isAdmin = user?.role;
 
-
-  {/* Fallback route for 404 */ }
-  <Route path="*" element={<div className="min-h-screen grid items-center justify-center text-2xl">
-    <div><img src="/page-404.gif" alt="" /></div> 404 - Page Not Found</div>} />
-
   console.log(isAuthenticated, isAdmin, user);
 
   return (
